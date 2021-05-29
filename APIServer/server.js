@@ -1,7 +1,7 @@
 
 import express from 'express';
 import bodyParser from 'body-parser';
-import { ApolloServer, gql } from 'apollo-server-express';
+import { ApolloServer, gql,AuthenticationError } from 'apollo-server-express';
 import typeDefs from './schema';
 import resolvers from './resolvers';
 import { makeExecutableSchema } from "graphql-tools";
@@ -22,6 +22,9 @@ const path = '/graphiql';
 
 const app = express();
 app.use(express.json());
+
+
+
 
 /////////////////////////////////////////// ----Redis---- ///////////////////////////////////////////
 
@@ -49,6 +52,7 @@ app.post('/api/login',async (req,res, next)=> {
 })
 /////////////////////////////////////////// ----JWT---- ///////////////////////////////////////////
 
+/////////////////////////////////////////// ----gQL---- ///////////////////////////////////////////
 
 const server = new ApolloServer({ 
     typeDefs, 
@@ -56,11 +60,13 @@ const server = new ApolloServer({
     context: ({req})=>{
       const authReq = Auth(req);
       return {auth: authReq, redis}
-    }
+    },
 });
 
 server.applyMiddleware({ app, path });
 
+
+/////////////////////////////////////////// ----gQL---- ///////////////////////////////////////////
 app.listen({ port: PORT }, () =>
   console.log(`Server ready at http://localhost:4000${server.graphqlPath}`)
 )

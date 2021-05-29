@@ -9,6 +9,7 @@
   "author": "desmond80in@gmail.com",
   "license": "MIT",
   "dependencies": {
+    "apollo-server": "^2.25.0",
     "apollo-server-express": "^2.25.0",
     "crypto": "^1.0.1",
     "express": "^4.17.1",

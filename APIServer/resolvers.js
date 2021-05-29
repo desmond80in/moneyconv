@@ -1,36 +1,55 @@
 
 import fetch from 'node-fetch';
-
+import { AuthenticationError } from 'apollo-server-express';
+  
+const data = require('./mocData');
 
 export default  {
   Query: {
     hello: () => 'Hello world!',
     getCountries: async (parent, {keys},{auth,redis})=> {
-      try{       
-        if(!auth || !auth.isAuth){
-          return null;
-        }
+              
+      if(!auth || !auth.isAuth){
+        throw new AuthenticationError('Not Authenicated')
+      }
+      try{  
         //if keys has values for countries the get specific country values 
         if(keys){
           let countryResult = [];
-          await Promise.all(keys.map( async(item) => {
-            console.log('county', item)
-            const nameResult = await fetch(`https://restcountries.eu/rest/v2/name/${item}`);
-            const json = await nameResult.json()
+          await Promise.all(keys.map( async(countryName) => {
+            const nameResult = await fetch(`https://restcountries.eu/rest/v2/name/${countryName}`);
+            const jsonCountry = await nameResult.json()
             if(nameResult){
-              json.forEach(cItem=>{
+              await Promise.all(jsonCountry.map( async (countryItem) => {
+                let currDic = {};
+                if(countryItem.currencies){
+                  const currQuery = countryItem.currencies.map(currencyItem=> currencyItem.code);
+                  await Promise.all(currQuery.map(async (cqItem)=>{
+                    let cReate = await redis.get(cqItem);
+                    if(!cReate){                   
+                      // const cResult = await fetch('http://data.fixer.io/api/latest?access_key=26e3a5fde572b8047894ad18c4b708f9&base=EUR')
+                      // const cJson = await cResult.json();
+                      const cJson = data.default;
+                      await redis.set(cqItem,cJson.rates[cqItem]);
+                      currDic[cqItem] = cJson.rates[cqItem];
+                    }else{
+                      currDic[cqItem]=cReate
+                    }
+                  }));
+                }
                 countryResult.push({
-                  n: cItem.name,
-                  c: cItem.alpha3Code,
-                  polulation: cItem.population,
-                  currencies: cItem.currencies && cItem.currencies.map(curr=> ({
+                  n: countryItem.name,
+                  c: countryItem.alpha3Code,
+                  polulation: countryItem.population,
+                  currencies: countryItem.currencies && countryItem.currencies.map(curr=> ({
                     c:curr.code,
                     n:curr.name,
                     s:curr.symbol,
+                    r:currDic[curr.code]
                   })),
-                  flag: cItem.flag
-                })              
-              })
+                  flag: countryItem.flag
+                }) 
+              }))              
             }
           }));
           return countryResult
