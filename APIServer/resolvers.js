@@ -5,20 +5,19 @@ import fetch from 'node-fetch';
 export default  {
   Query: {
     hello: () => 'Hello world!',
-    getCountries: async (parent, {keys},{redis})=> {
+    getCountries: async (parent, {keys},{auth,redis})=> {
       try{       
-
+        if(!auth || !auth.isAuth){
+          return null;
+        }
         //if keys has values for countries the get specific country values 
         if(keys){
           let countryResult = [];
-          console.log(keys)
-
           await Promise.all(keys.map( async(item) => {
             console.log('county', item)
             const nameResult = await fetch(`https://restcountries.eu/rest/v2/name/${item}`);
             const json = await nameResult.json()
             if(nameResult){
-              console.log('result ',json)
               json.forEach(cItem=>{
                 countryResult.push({
                   n: cItem.name,
@@ -34,24 +33,6 @@ export default  {
               })
             }
           }));
-
-          console.log('final result ',countryResult)
-          // for await (let item of keys){
-          //   const nameResult = await fetch(`https://restcountries.eu/rest/v2/name/${item}`);
-          //   if(nameResult){
-          //     countryResult.push({
-          //       n: nameResult.name,
-          //       c: nameResult.alpha3Code,
-          //       polulation: nameResult.population,
-          //       currencies: nameResult.currencies && nameResult.currencies.map(curr=> ({
-          //         c:curr.code,
-          //         n:curr.name,
-          //         s:curr.symbol,
-          //       }))
-          //     })
-          //   }
-          // }
-
           return countryResult
         }
 
@@ -80,9 +61,9 @@ export default  {
         return null;
       }
     },
+
     getCurrecies: async (parent, {}, {redis}) =>{
       try{
-
         const key = 'ac-list';
         //check if redis has value for key
         let currencyVals = await redis.get(key);
