@@ -3,7 +3,6 @@ import jwt, { JsonWebTokenError } from 'jsonwebtoken';
 
 export default async(req,res,redis) => {  
   const user = req.body;
-  console.log('user ', user)
   if(!user.password || !user.username ){
     return res.status(400).send({message: 'Invalid username or password'});
   }
@@ -19,8 +18,7 @@ export default async(req,res,redis) => {
     return res.status(400).send({message: 'Invalid username or password'});
   }  
 
-  jwt.sign({ user }, 'secretKey',( err, token) => {
-    console.log('token',token)
+  jwt.sign({ user }, 'secretKey', { expiresIn: 60 * 60 },( err, token) => {
     res.json({ token });
   });
 }
