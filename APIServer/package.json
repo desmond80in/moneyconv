@@ -1,0 +1,27 @@
+{
+  "name": "money-con-server",
+  "version": "1.0.0",
+  "description": "Money conversion server",
+  "main": "server.js",
+  "scripts": {
+    "start": "nodemon --exec babel-node server.js"
+  },
+  "author": "desmond80in@gmail.com",
+  "license": "MIT",
+  "dependencies": {
+    "apollo-server-express": "^2.25.0",
+    "crypto": "^1.0.1",
+    "express": "^4.17.1",
+    "graphql": "^15.5.0",
+    "graphql-tools": "^7.0.5",
+    "ioredis": "^4.27.3",
+    "jsonwebtoken": "^8.5.1",
+    "node-fetch": "^2.6.1"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-stage-3": "^6.24.1",
+    "nodemon": "^2.0.7"
+  }
+}
