@@ -9,6 +9,16 @@ import { withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 import compose from "recompose/compose";
 
+import { useQuery, gql } from "@apollo/react-hooks";
+const GET_COUNTRIES = gql`
+  query GetExchangeRates {
+    getCountries {
+      c
+      n
+    }
+  }
+`;
+
 const styles = (theme) => ({
   root: {
     color: "black",
@@ -38,6 +48,34 @@ const styles = (theme) => ({
   },
 });
 
+function SearchByCountries() {
+  const { loading, error, data } = useQuery(GET_COUNTRIES);
+
+  console.log("error", error);
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error :(</p>;
+
+  const result = data.getCountries.map(({ c, n }) => ({ c, n }));
+
+  return (
+    <Autocomplete
+      multiple
+      id="tags-standard"
+      options={result}
+      getOptionLabel={(option) => option.n}
+      defaultValue={[result[13]]}
+      renderInput={(params) => (
+        <TextField
+          {...params}
+          variant="standard"
+          label="Multiple values"
+          placeholder="Favorites"
+        />
+      )}
+    />
+  );
+}
+
 class CurrencyConverter extends Component {
   render() {
     const { classes } = this.props;
@@ -48,7 +86,8 @@ class CurrencyConverter extends Component {
             Last updated on 01/22/2021 11:00:00 GMT
           </Typography>
           <Box>
-            <Autocomplete
+            <SearchByCountries></SearchByCountries>
+            {/* <Autocomplete
               multiple
               id="tags-standard"
               options={top100Films}
@@ -62,7 +101,7 @@ class CurrencyConverter extends Component {
                   placeholder="Favorites"
                 />
               )}
-            />
+            /> */}
           </Box>
         </Paper>
       </div>

@@ -11,6 +11,8 @@ export const loginPost = (loginData) => (dispatch) => {
     .then(
       (result) => {
         if (result.isAuth) {
+          // Store the token in store
+          localStorage.setItem("token", result.token);
           dispatch({
             type: LOGGED_IN_SUCCESS_ACTION,
             payload: {
