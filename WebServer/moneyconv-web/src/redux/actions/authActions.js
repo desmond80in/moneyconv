@@ -1,4 +1,13 @@
-import { LOGGED_IN_SUCCESS_ACTION, LOGGED_IN_FAILURE_ACTION } from "./types";
+import {
+  LOGGED_IN_SUCCESS_ACTION,
+  LOGGED_IN_FAILURE_ACTION,
+  LOGOUT_ACTION,
+} from "./types";
+
+export const logout = () => (dispatch) => {
+  console.log("logout called");
+  dispatch({ type: LOGOUT_ACTION });
+};
 
 export const loginPost = (loginData) => (dispatch) => {
   const requestOptions = {

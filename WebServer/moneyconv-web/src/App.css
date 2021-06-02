@@ -36,3 +36,19 @@
     transform: rotate(360deg);
   }
 }
+
+label#tags-standard-label.MuiInputLabel-shrink {
+  font-size: xx-large;
+  margin-top: -25px;
+  color: white;
+}
+
+input#tags-standard {
+  color: white;
+}
+
+.MuiAutocomplete-root {
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 10px;
+  padding: 0px 5px;
+}
