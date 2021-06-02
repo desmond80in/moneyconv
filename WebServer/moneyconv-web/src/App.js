@@ -15,44 +15,44 @@ import { ApolloProvider } from "@apollo/client/react";
 import { ApolloClient, createHttpLink, InMemoryCache } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
 
-const httpLink = createHttpLink({
-  uri: "http://localhost:4000/graphiql",
-});
+// const httpLink = createHttpLink({
+//   uri: "http://localhost:4000/graphql",
+// });
 
-const authLink = setContext((_, { headers }) => {
-  // get the authentication token from local storage if it exists
-  const token = localStorage.getItem("token");
-  // return the headers to the context so httpLink can read them
-  return {
-    headers: {
-      ...headers,
-      authorization: token ? `Bearer ${token}` : "",
-    },
-  };
-});
+// const authLink = setContext((_, { headers }) => {
+//   // get the authentication token from local storage if it exists
+//   const token = localStorage.getItem("token");
+//   // return the headers to the context so httpLink can read them
+//   return {
+//     headers: {
+//       ...headers,
+//       authorization: token ? `Bearer ${token}` : "",
+//     },
+//   };
+// });
 
-const client = new ApolloClient({
-  link: authLink.concat(httpLink),
-  cache: new InMemoryCache(),
-});
+// const client = new ApolloClient({
+//   link: authLink.concat(httpLink),
+//   cache: new InMemoryCache(),
+// });
 
 function App() {
   return (
-    <ApolloProvider client={client}>
-      <Provider store={store}>
-        <Router>
-          <div className="App">
-            <Header />
-            <Switch>
-              <PrivateRoute path="/converter" component={ConverterPage} />
-              <Route path="/login" component={LoginPage} />
-              <Route path="/register" component={RegisterPage} />
-              <Route path="/" component={LandingPage} />
-            </Switch>
-          </div>
-        </Router>
-      </Provider>
-    </ApolloProvider>
+    // <ApolloProvider client={client}>
+    <Provider store={store}>
+      <Router>
+        <div className="App">
+          <Header />
+          <Switch>
+            <PrivateRoute path="/converter" component={ConverterPage} />
+            <Route path="/login" component={LoginPage} />
+            <Route path="/register" component={RegisterPage} />
+            <Route path="/" component={LandingPage} />
+          </Switch>
+        </div>
+      </Router>
+    </Provider>
+    // </ApolloProvider>
   );
 }
 

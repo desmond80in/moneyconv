@@ -18,15 +18,26 @@ export const schema = makeExecutableSchema({
   resolvers,
 });
 
-const PORT = 4000;
-const path = "/graphiql";
+const gqlPORT = process.env.GQL_PORT || 4000;
+const gqlPATH = process.env.GQL_PATH || "/graphql";
+const gqlURL = process.env.GQL_URL || "http://localhost";
+
+const webAPPURL = process.env.WEB_APP_URL || "http://localhost";
+const webAPPPort = process.env.WEB_APP_PORT || 3000;
+
+const redisPORT = process.env.REDIS_PORT || "19760";
+const redisENDPOINT =
+  process.env.REDIS_ENDPOINT ||
+  "redis-19760.c251.east-us-mz.azure.cloud.redislabs.com";
+const redisPASSWORD =
+  process.env.REDIS_PASSWORD || "E0WRtfau47LclMRSMVA6MyF36d1GB4i8";
 
 const app = express();
 app.use(express.json());
 
 ////////////////////////////////////////// -----Cros----- ///////////////////////////////////////////
 var corsOptions = {
-  origin: "http://localhost:3000",
+  origin: `${webAPPURL}:${webAPPPort}`,
   optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
 app.use(cors());
@@ -34,9 +45,9 @@ app.use(cors());
 /////////////////////////////////////////// ----Redis---- ///////////////////////////////////////////
 
 const redis = new Redis({
-  host: "redis-19760.c251.east-us-mz.azure.cloud.redislabs.com",
-  port: 19760,
-  password: "E0WRtfau47LclMRSMVA6MyF36d1GB4i8",
+  host: redisENDPOINT,
+  port: redisPORT,
+  password: redisPASSWORD,
 });
 
 /////////////////////////////////////////// ----Redis---- ///////////////////////////////////////////
@@ -66,9 +77,9 @@ const server = new ApolloServer({
   },
 });
 
-server.applyMiddleware({ app, path });
+server.applyMiddleware({ app, gqlPATH });
 
 /////////////////////////////////////////// ----gQL---- ///////////////////////////////////////////
-app.listen({ port: PORT }, () =>
-  console.log(`Server ready at http://localhost:4000${server.graphqlPath}`)
+app.listen({ port: gqlPORT }, () =>
+  console.log(`Server ready at ${gqlURL}:${gqlPORT}${server.graphqlPath}`)
 );
